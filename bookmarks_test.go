@@ -9,7 +9,7 @@ import (
 )
 
 func TestName1(t *testing.T) {
-	dt, err := ioutil.ReadFile("bookmarks_2019_4_18.html")
+	dt, err := ioutil.ReadFile("kdata/bookmarks_2019_4_18.html")
 	assert.MustNotError(err)
 
 	bk := &Bookmarks{bks: &_Dir{}}
@@ -19,11 +19,17 @@ func TestName1(t *testing.T) {
 	}).P()
 
 	{
-		dt := bk.Export()
-		assert.MustNotError(err)
-		assert.MustNotError(ioutil.WriteFile("test.html", []byte(dt), 0755))
-		dt1 := bk.Json()
-		assert.MustNotError(ioutil.WriteFile("test.json", dt1, 0755))
+		//dt := bk.Export()
+		//assert.MustNotError(err)
+		//assert.MustNotError(ioutil.WriteFile("test.html", []byte(dt), 0755))
+		//dt1 := bk.Json()
+		//assert.MustNotError(ioutil.WriteFile("test.json", dt1, 0755))
+
+		//dt2 := bk.ExportMD()
+		//assert.MustNotError(ioutil.WriteFile("kdata/test.md", []byte(dt2), 0755))
+
+		dt3 := bk.ExportMutiMD()
+		assert.MustNotError(ioutil.WriteFile("kdata/test.json", dt3, 0755))
 	}
 
 }

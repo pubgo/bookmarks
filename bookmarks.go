@@ -86,6 +86,34 @@ func (t *Bookmarks) link(bk *Bookmark) string {
 	return fmt.Sprintf(`<DT><A %s>%s</A>`, strings.Join(_params, " "), bk.Title)
 }
 
+func (t *Bookmarks) h3_md(dir *_Dir, index int) string {
+	_h := ""
+	for i := 0; i < index; i++ {
+		_h += "#"
+	}
+
+	_h += " " + dir.Title + "\n"
+
+	var _ls []string
+	for _, _l := range dir.Links {
+		_ls = append(_ls, t.link_md(_l))
+	}
+
+	_h += strings.Join(_ls, "\n")
+
+	var _dls []string
+	for _, _l := range dir.Dirs {
+		_dls = append(_dls, t.h3_md(_l, index+1))
+	}
+	_h += strings.Join(_dls, "\n")
+
+	return _h
+}
+
+func (t *Bookmarks) link_md(bk *Bookmark) string {
+	return fmt.Sprintf(`[%s](%s)`, assert.If(bk.Tags == "", bk.Title, fmt.Sprintf("%s||%s", bk.Tags, bk.Title)), bk.URL)
+}
+
 func (t *Bookmarks) Import(r io.Reader) {
 	assert.Bool(r == nil, "")
 
@@ -155,6 +183,20 @@ func (t *Bookmarks) Import(r io.Reader) {
 
 func (t *Bookmarks) Export() string {
 	return fmt.Sprintf(header, t.h3(t.bks))
+}
+
+func (t *Bookmarks) ExportMD() string {
+	return t.h3_md(t.bks, 1)
+}
+
+func (t *Bookmarks) ExportMutiMD() []byte {
+	_dt := make(map[string]string)
+	for _, _dir := range t.bks.Dirs {
+		_dt[_dir.Title] = t.h3_md(_dir, 1)
+	}
+	_ret, err := json.Marshal(_dt)
+	assert.MustNotError(err)
+	return _ret
 }
 
 func (t *Bookmarks) Json() []byte {
